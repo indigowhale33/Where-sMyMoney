@@ -132,7 +132,7 @@ $.getJSON("http://api.reimaginebanking.com/accounts/56c66be6a73e492741507e65/pur
 
 				$.getJSON("http://api.reimaginebanking.com/merchants/" + stringData[i].merchant_id.toString() + "?key=d1964bf859fc21d67d2de4ca68e24dcd",function(data,status){
 //alert(data.geocode.lat+" "+ data.geocode.lng);
-					pointArray.push(           new google.maps.LatLng(parseFloat(data.geocode.lat), parseFloat(data.geocode.lng)));
+					points.push(           new google.maps.LatLng(parseFloat(data.geocode.lat), parseFloat(data.geocode.lng)));
 				});
 			}
 
