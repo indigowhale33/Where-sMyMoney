@@ -4,6 +4,7 @@ body {
   min-height: 2000px;
   background-color: 	#FEFEFE;
   font-family: 'Roboto', sans-serif;
+  font-weight: 300; 
 }
 
 .navbar-static-top {
@@ -30,9 +31,11 @@ body {
 	font-size: 22px;
 	padding-top: 11px;
 	font-family: 'Roboto', sans-serif;
+	font-weight: 300; 
 
 }
 
 .nav .navbar-nav .navbar-right{
 	font-family: 'Roboto', sans-serif;
+	font-weight: 300; 
 }
