@@ -1,14 +1,17 @@
 body {
   min-height: 2000px;
+  background-color: 	#FEFEFE;
 }
 
 .navbar-static-top {
   margin-bottom: 19px;
-  background-color: #992266;
+  background-color: #802040;
   padding-top: 0px;
   margin-top: 0px;
 }
-
+#logo{
+	margin-top: -8px;
+}
 #map {
 		margin: auto;
 		width: 80%;
