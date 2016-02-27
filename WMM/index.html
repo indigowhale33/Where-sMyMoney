@@ -8,7 +8,6 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
-
     <title>Static Top Navbar Example for Bootstrap</title>
 
     <!-- Bootstrap core CSS -->
@@ -19,7 +18,7 @@
 
     <!-- Custom styles for this template -->
     <link href="navbar-static-top.css" rel="stylesheet">
-
+    <script src="jquery-1.12.0.min.js"></script>
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
@@ -49,24 +48,20 @@
         <div id="navbar" class="navbar-collapse collapse">
           
           <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Last Month<span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Last Week/a></li>
-                <li><a href="#">Last</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li>
+            <div id = "daname"></div>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 
     <div id="map"></div>
+    <script>
+	$(document).ready(function(){
+  	$.getJSON("http://api.reimaginebanking.com/customers/56c66be5a73e4927415073ca?key=d1964bf859fc21d67d2de4ca68e24dcd", function(data, status){
+     	document.getElementById("daname").innerHTML = JSON.parse(JSON.stringify(data)).first_name + " " + JSON.parse(JSON.stringify(data)).last_name;
+  	});
+	});
+	</script>
     <script>
       var map;
       function initMap() {

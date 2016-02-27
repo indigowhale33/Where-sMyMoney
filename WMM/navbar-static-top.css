@@ -1,6 +1,9 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
 body {
   min-height: 2000px;
   background-color: 	#FEFEFE;
+  font-family: 'Roboto', sans-serif;
 }
 
 .navbar-static-top {
@@ -21,3 +24,15 @@ body {
     border-radius: 16px;
       }
 
+#daname{
+	color: white;
+	font-family: Helvetica;
+	font-size: 22px;
+	padding-top: 11px;
+	font-family: 'Roboto', sans-serif;
+
+}
+
+.nav .navbar-nav .navbar-right{
+	font-family: 'Roboto', sans-serif;
+}
