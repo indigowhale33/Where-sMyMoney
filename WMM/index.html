@@ -9,20 +9,24 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
     <title>Static Top Navbar Example for Bootstrap</title>
-
+    <script src="js/jquery-1.12.1.min.js"></script>
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-
+    
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
+    <link href="css/bootstrap-slider.css" rel="stylesheet">
+    <link href="css/bootstrap-select.css" rel="stylesheet">
+
     <link href="navbar-static-top.css" rel="stylesheet">
-    <script src="jquery-1.12.0.min.js"></script>
+    
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
-
+    <script src="js/bootstrap-slider.js"></script>
+    <script src="js/bootstrap-select.js"></script>
     <script data-main="lib/capital_one" src="lib/require-jquery.js"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -53,9 +57,27 @@
         </div><!--/.nav-collapse -->
       </div>
     </nav>
+        <div id = "centerbartop">
+    <img src="img/heattitle.png" style="width:275px;height:50px; margin-left: 0px; float:left" />
+    <select class="selectpicker" onChange="pickChange()" id = "dapick">
+      <option>Last Month</option>
+      <option>Last 3 Months</option>
+      <option>Last 6 Months</option>
+      <option>Last Year</option>
+      <option>All Time</option>
+    </select>
+    
+  </div>
+    <div id="map"></div>
+<div id = "centerbar">
+    <img src="img/amonut.png" style="width:160px;height:40px; margin-left: 20px; margin-bottom: 10px;" />
+    <input id="ex6" type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="10"/>
+    <img src="img/recency.png" style="width:160px;height:40px; margin-left: 20px; margin-bottom: 10px;" />
+  </div>
+
 
     
-    <div id="map"></div>
+
     <script>
 
       // This example requires the Visualization library. Include the libraries=visualization
@@ -65,11 +87,21 @@
       var map, heatmap;
 	var points ;
 var pointArray;
-
+var latArray = [32.332];
+var lngArray = [-77.232];
+var amtArray = [];
+var tempdata = [];
+var latdata = [];
+var lngdata = [];
+var amountdata = [];
+var period = 30;
+var slideVal = 10;
+var namedata = [];
       function initMap() {
 	points =  [ new google.maps.LatLng(38.881, -77.247)];
 	pointArray = new google.maps.MVCArray(points);
-	getPoints();
+  getPoints(10);
+	newPoints(10, 30);
   var grad = [
     'rgba(0, 255, 255, 0)',
     'rgba(0, 255, 255, 1)',
@@ -99,27 +131,88 @@ var pointArray;
           opacity: .8,
           gradient: grad
         });
+
+        for(var i = 0; i<lngdata.length;i++){
+  var marker = new google.maps.Marker({
+    position: {lat: parseFloat(latdata[i]),lng: parseFloat(lngdata[i])},
+    map: map,
+    label: i,
+    title: namedata[i]
+  });
+  google.maps.event.addListener(marker, 'click', function() {
+     
+      drawChart(this);
+    });
+}
       }
+
+
+function pickChange(){
+      var myselected = document.getElementById("dapick").selectedIndex;
+      pointArray.clear();
+      period = 30;
+      if(myselected == 1)
+        period = 90;
+      else if(myselected == 2)
+        period = 182;
+      else if(myselected == 3)
+        period = 365;
+      else if(myselected == 4)
+        period = -1;
+      newPoints(slideVal, period);
+}
+
+
+function newPoints(sVal, period){
+  for(var i = 0; i < tempdata.length; i++)
+  {
+    var date1 = new Date(parseInt(tempdata[i].substring(5,7),10)+ "/" + parseInt(tempdata[i].substring(8,10),10) + "/" + parseInt(tempdata[i].substring(0,4),10) );
+    var date2 = new Date();
+    var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+    var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+    if(period == -1)
+    {
+      pointArray.push({location: new google.maps.LatLng(parseFloat(latdata[i]), parseFloat(lngdata[i])), weight: ((1000/diffDays)*sVal+amountdata[i]*(20-sVal))});
+    }
+    else if(diffDays < period)
+    {
+    if(diffDays == 0)
+    {
+      diffDays = 1;
+    }
+    pointArray.push({location: new google.maps.LatLng(parseFloat(latdata[i]), parseFloat(lngdata[i])), weight: ((1000/diffDays)*sVal+amountdata[i]*(20-sVal))});
+    }
+  }
+  
+}
+
 
       
       // Heatmap data: 500 Points
-      function getPoints() {
-	var stringData=[];
-
-$.getJSON("http://api.reimaginebanking.com/accounts/56c66be6a73e492741507e65/purchases?key=d1964bf859fc21d67d2de4ca68e24dcd", 	function(data){
-
-  		stringData = JSON.parse(JSON.stringify(data));
-
-		for(var i = 0; i<stringData.length; i++)
-			{			
-
-				$.getJSON("http://api.reimaginebanking.com/merchants/" + stringData[i].merchant_id.toString() + "?key=d1964bf859fc21d67d2de4ca68e24dcd",function(data,status){
-//alert(data.geocode.lat+" "+ data.geocode.lng);
-					pointArray.push(           new google.maps.LatLng(parseFloat(data.geocode.lat), parseFloat(data.geocode.lng)));
-				});
-			}
-
-	});
+      function getPoints(sVal) {
+	$.ajax({
+  url: "http://api.reimaginebanking.com/accounts/56c66be6a73e492741507e65/purchases?key=d1964bf859fc21d67d2de4ca68e24dcd",
+  async: false,
+  dataType: 'json',
+  success: function (response) {
+for(var i = 0; i<response.length; i++)
+            {    
+tempdata.push(response[i].purchase_date);
+amountdata.push(response[i].amount);
+$.ajax({
+  url: "http://api.reimaginebanking.com/merchants/"+response[i].merchant_id.toString()+"?key=d1964bf859fc21d67d2de4ca68e24dcd",
+  async: false,
+  dataType: 'json',
+  success: function (data) {
+namedata.push(data.name);
+latdata.push(data.geocode.lat);
+lngdata.push(data.geocode.lng);
+}
+});
+}
+    // do stuff with response.
+  }
+});
 $(document).ready(function(){
       $.getJSON("http://api.reimaginebanking.com/customers/56c66be5a73e4927415073ca?key=d1964bf859fc21d67d2de4ca68e24dcd", function(data, status){
         document.getElementById("daname").innerHTML = JSON.parse(JSON.stringify(data)).first_name + " " + JSON.parse(JSON.stringify(data)).last_name;
@@ -136,10 +229,26 @@ $(document).ready(function(){
           new google.maps.LatLng(37.783206, -122.440829)
         ];*/
       }
+
+// Instantiate a slider
+var mySlider = new Slider("#ex6", {tooltip: 'hide'
+    // initial options object
+});
+mySlider.on("slideStop", function(slideEvt) {
+  pointArray.clear();
+  slideVal = mySlider.getValue();
+  newPoints(slideVal, period);
+});
+// Call a method on the slider
+var value = mySlider.getValue();
+$('.selectpicker').selectpicker();
     </script>
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6vll6lr2v5EfnVsuYAqjrt3AAzfRaVBk&signed_in=true&libraries=visualization&callback=initMap">
     </script>
+    <script>
+    $('.selectpicker').selectpicker();
+</script>
 
 
 	
@@ -153,7 +262,9 @@ $(document).ready(function(){
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="js/bootstrap.min.js"></script>
+
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    
   </body>
 </html>

@@ -6,9 +6,15 @@ body {
   font-family: 'Roboto', sans-serif;
   font-weight: 100; 
 }
-
+img{
+    -khtml-user-select: none;
+    -o-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
 .navbar-static-top {
-  margin-bottom: 19px;
+  margin-bottom: 0px;
   background-color: #802040;
   padding-top: 0px;
   margin-top: 0px;
@@ -18,6 +24,7 @@ body {
 }
 #map {
 		margin: auto;
+    margin-top: 15px;
 		width: 80%;
         height: 500px;
         -webkit-border-radius: 10px;
@@ -39,3 +46,58 @@ body {
 	font-family: 'Roboto', sans-serif;
 	font-weight: 100; 
 }
+
+.slider.slider-horizontal{
+  margin: auto;
+  padding: 20px;
+  width: 500px;
+}
+.slider-handle{
+  background-color: #701030;
+  width: 40px;
+  height: 18px;
+  background-image: linear-gradient(to bottom, #c42b7f 0%, #74103e 100%);
+
+  
+}
+
+.slider-handle.round{
+  border-radius: 3px;
+}
+#centerbartop{
+  width: 80%;
+  text-align:center;
+  margin: auto;
+  padding-top: 18px;
+  overflow: hidden;
+  z-index: 1050;
+}
+
+.bootstrap-select.btn-group:not(.input-group-btn), .bootstrap-select.btn-group[class*="col-"]{
+  float:right;
+  position: absolute;
+  z-index: 1050;
+  top: 80px;
+  right: 10%;
+  margin-bottom: -10px;
+  font-family: Roboto;
+
+}
+
+.slider.slider-horizontal .slider-tick, .slider.slider-horizontal .slider-handle{
+  margin-left: -20px;
+}
+
+#dapick{
+  float: right;
+}
+
+#centerbar{
+  width: 100%;
+  text-align:center;
+  margin: auto;
+  padding-top: 18px;
+}
+select.form-control {
+    -webkit-appearance: menulist;
+}s
