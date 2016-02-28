@@ -97,6 +97,7 @@ var amountdata = [];
 var period = 30;
 var slideVal = 10;
 var namedata = [];
+var onemonth = [];
       function initMap() {
 	points =  [ new google.maps.LatLng(38.881, -77.247)];
 	pointArray = new google.maps.MVCArray(points);
@@ -131,12 +132,17 @@ var namedata = [];
           opacity: .8,
           gradient: grad
         });
+        var image = {url:'img/map-marker.png',
 
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(15, 15),
+        scaledSize: new google.maps.Size(50, 50)};
         for(var i = 0; i<lngdata.length;i++){
   var marker = new google.maps.Marker({
     position: {lat: parseFloat(latdata[i]),lng: parseFloat(lngdata[i])},
     map: map,
     label: i,
+    icon: image,
     title: namedata[i]
   });
   google.maps.event.addListener(marker, 'click', function() {
@@ -181,6 +187,10 @@ function newPoints(sVal, period){
       diffDays = 1;
     }
     pointArray.push({location: new google.maps.LatLng(parseFloat(latdata[i]), parseFloat(lngdata[i])), weight: ((1000/diffDays)*sVal+amountdata[i]*(20-sVal))});
+    }
+    else
+    {
+      pointArray.push({location: new google.maps.LatLng(parseFloat(latdata[i]), parseFloat(lngdata[i])), weight: 0});
     }
   }
   
