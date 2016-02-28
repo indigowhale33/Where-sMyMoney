@@ -75,7 +75,9 @@
     <input id="ex6" type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="10"/>
     <img src="img/recency.png" style="width:160px;height:40px; margin-left: 20px; margin-bottom: 10px;" />
   </div>
-
+<div id = "centerbar" style="margin-top: 30px;">
+    <img src="img/cat.png" style="width:275px;height:50px;  margin-left: 20px; margin-bottom: 10px;" />
+  </div>
 
     
 
@@ -226,7 +228,6 @@ function newPoints(sVal, period){
 
 
       var options = {
-          title: 'Title',
           width: 800,
           height: 500,
           pieHole: 0.3,
@@ -261,7 +262,7 @@ function drawChart(marker){
     var dat = [];
     for(var i=0; i < tempdata.length; i++){
       
-      if(parseInt(latdata[i].toFixed(6)) == parseInt(mlat) && parseInt(lngdata[i].toFixed(6)) == parseInt(mlng)){
+      if(latdata[i].toFixed(6) == mlat.toFixed(6)){
         tokens = tempdata[i].toString().split("-");
         month = new Date(tokens[0],tokens[1],tokens[2]);
         dat.push(month);
