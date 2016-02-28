@@ -21,16 +21,23 @@
     <link href="css/bootstrap-select.css" rel="stylesheet">
 
     <link href="navbar-static-top.css" rel="stylesheet">
+
     
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
     <script src="js/bootstrap-slider.js"></script>
     <script src="js/bootstrap-select.js"></script>
-    <script data-main="lib/capital_one" src="lib/require-jquery.js"></script>
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="jsapi.js"></script>
+    <!--<script type="text/javascript"
+  src="https://maps.googleapis.com/maps/api/js?libraries=visualization"></script>-->
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script data-main="lib/capital_one" src="lib/require-jquery.js"></script>
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
@@ -90,17 +97,20 @@
 var pointArray;
 var latArray = [32.332];
 var lngArray = [-77.232];
-var amtArray = [];
 var tempdata = [];
 var latdata = [];
 var lngdata = [];
-var catedata = [];
 var amountdata = [];
+var catedata = [];
 var period = 30;
 var slideVal = 10;
 var namedata = [];
-var onemonth = [];
-      function initMap() {
+
+
+  
+
+
+function initMap() {
 	points =  [ new google.maps.LatLng(38.881, -77.247)];
 	pointArray = new google.maps.MVCArray(points);
   getPoints(10);
@@ -134,20 +144,15 @@ var onemonth = [];
           opacity: .8,
           gradient: grad
         });
-        var image = {url:'img/map-marker.png',
 
-        origin: new google.maps.Point(0, 0),
-        anchor: new google.maps.Point(15, 15),
-        scaledSize: new google.maps.Size(50, 50)};
-        for(var i = 0; i<lngdata.length;i++){
-  var marker = new google.maps.Marker({
-    position: {lat: parseFloat(latdata[i]),lng: parseFloat(lngdata[i])},
-    map: map,
-    label: i,
-    icon: image,
-    title: namedata[i]
-  });
-  google.maps.event.addListener(marker, 'click', function() {
+  for(var i = 0; i<lngdata.length;i++){
+
+    var marker = new google.maps.Marker({
+      position: {lat: parseFloat(latdata[i]),lng: parseFloat(lngdata[i])},
+      map: map,
+      title: namedata[i]
+    });
+    google.maps.event.addListener(marker, 'click', function() {
      
       drawChart(this);
     });
@@ -190,15 +195,58 @@ function newPoints(sVal, period){
     }
     pointArray.push({location: new google.maps.LatLng(parseFloat(latdata[i]), parseFloat(lngdata[i])), weight: ((1000/diffDays)*sVal+amountdata[i]*(20-sVal))});
     }
-    else
-    {
-      pointArray.push({location: new google.maps.LatLng(parseFloat(latdata[i]), parseFloat(lngdata[i])), weight: 0});
-    }
   }
   
 }
-</script>
-<script type="text/javascript">
+
+
+      
+      // Heatmap data: 500 Points
+      function getPoints(sVal) {
+	$.ajax({
+  url: "http://api.reimaginebanking.com/accounts/56c66be6a73e492741507e65/purchases?key=d1964bf859fc21d67d2de4ca68e24dcd",
+  async: false,
+  dataType: 'json',
+  success: function (response) {
+for(var i = 0; i<response.length; i++)
+            {    
+tempdata.push(response[i].purchase_date);
+amountdata.push(response[i].amount);
+$.ajax({
+  url: "http://api.reimaginebanking.com/merchants/"+response[i].merchant_id.toString()+"?key=d1964bf859fc21d67d2de4ca68e24dcd",
+  async: false,
+  dataType: 'json',
+  success: function (data) {
+namedata.push(data.name);
+catedata.push(data.category);
+latdata.push(data.geocode.lat);
+lngdata.push(data.geocode.lng);
+}
+});
+}
+    // do stuff with response.
+  }
+}).done(function(){
+  drawChart2();
+});
+$(document).ready(function(){
+      $.getJSON("http://api.reimaginebanking.com/customers/56c66be5a73e4927415073ca?key=d1964bf859fc21d67d2de4ca68e24dcd", function(data, status){
+        document.getElementById("daname").innerHTML = JSON.parse(JSON.stringify(data)).first_name + " " + JSON.parse(JSON.stringify(data)).last_name;
+      });  
+    });
+//alert("A");
+/*[
+          new google.maps.LatLng(37.782551, -122.445368),
+          new google.maps.LatLng(37.782745, -122.444586),
+          new google.maps.LatLng(37.782842, -122.443688),
+          new google.maps.LatLng(37.782919, -122.442815),
+          new google.maps.LatLng(37.782992, -122.442112),
+          new google.maps.LatLng(37.783100, -122.441461),
+          new google.maps.LatLng(37.783206, -122.440829)
+        ];*/
+      }
+      </script>
+      <script type="text/javascript">
             //  google.charts.load('current', {packages: ['corechart']});
     google.charts.setOnLoadCallback(drawChart2);
     google.load("visualization", "1", {packages:["corechart", "table"]}); 
@@ -247,10 +295,11 @@ function newPoints(sVal, period){
       </script>
 <script>
 
+
 function drawChart(marker){
   
   var data = new google.visualization.DataTable();
-    data.addColumn('date', 'Month');
+    data.addColumn('number', 'Month');
     data.addColumn('number', 'Purchase');
     var mlat = marker.position.lat();
     var mlng = marker.position.lng();
@@ -259,13 +308,19 @@ function drawChart(marker){
     var storename;
     var pbytime = {};
     var dat = [];
+    alert("??");
     for(var i=0; i < tempdata.length; i++){
-      
+      alert(parseInt(latdata[i].toFixed(6)));
+      alert(mlat);
+      alert(parseInt(lngdata[i].toFixed(6)));
+      alert(mlng);
       if(parseInt(latdata[i].toFixed(6)) == parseInt(mlat) && parseInt(lngdata[i].toFixed(6)) == parseInt(mlng)){
         tokens = tempdata[i].toString().split("-");
         month = new Date(tokens[0],tokens[1],tokens[2]);
+        //alert(month);
         dat.push(month);
         storename = namedata[i];
+        //alert(storename);
         amt += amountdata[i];
         amtarr.push(amountdata[i])
 
@@ -311,54 +366,9 @@ function drawChart(marker){
 
 </script>
 <div align="center", id="myPieChart"/>
+
+  
 <script>
-
-      
-      // Heatmap data: 500 Points
-      function getPoints(sVal) {
-	$.ajax({
-  url: "http://api.reimaginebanking.com/accounts/56c66be6a73e492741507e65/purchases?key=d1964bf859fc21d67d2de4ca68e24dcd",
-  async: false,
-  dataType: 'json',
-  success: function (response) {
-for(var i = 0; i<response.length; i++)
-            {    
-tempdata.push(response[i].purchase_date);
-amountdata.push(response[i].amount);
-$.ajax({
-  url: "http://api.reimaginebanking.com/merchants/"+response[i].merchant_id.toString()+"?key=d1964bf859fc21d67d2de4ca68e24dcd",
-  async: false,
-  dataType: 'json',
-  success: function (data) {
-namedata.push(data.name);
-catedata.push(data.category);
-latdata.push(data.geocode.lat);
-lngdata.push(data.geocode.lng);
-}
-});
-}
-    // do stuff with response.
-  }
-  }).done(function(){
-  drawChart2();
-});
-$(document).ready(function(){
-      $.getJSON("http://api.reimaginebanking.com/customers/56c66be5a73e4927415073ca?key=d1964bf859fc21d67d2de4ca68e24dcd", function(data, status){
-        document.getElementById("daname").innerHTML = JSON.parse(JSON.stringify(data)).first_name + " " + JSON.parse(JSON.stringify(data)).last_name;
-      });  
-    });
-//alert("A");
-/*[
-          new google.maps.LatLng(37.782551, -122.445368),
-          new google.maps.LatLng(37.782745, -122.444586),
-          new google.maps.LatLng(37.782842, -122.443688),
-          new google.maps.LatLng(37.782919, -122.442815),
-          new google.maps.LatLng(37.782992, -122.442112),
-          new google.maps.LatLng(37.783100, -122.441461),
-          new google.maps.LatLng(37.783206, -122.440829)
-        ];*/
-      }
-
 // Instantiate a slider
 var mySlider = new Slider("#ex6", {tooltip: 'hide'
     // initial options object
@@ -370,17 +380,18 @@ mySlider.on("slideStop", function(slideEvt) {
 });
 // Call a method on the slider
 var value = mySlider.getValue();
+$(document).ready(function() {
 $('.selectpicker').selectpicker();
-    </script>
-    <script async defer
+    
+    
+    $('.selectpicker').selectpicker();
+  });
+</script>
+<script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6vll6lr2v5EfnVsuYAqjrt3AAzfRaVBk&signed_in=true&libraries=visualization&callback=initMap">
     </script>
-    <script>
-    $('.selectpicker').selectpicker();
-</script>
 
 
-	
 	
   
 

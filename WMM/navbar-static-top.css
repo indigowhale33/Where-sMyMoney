@@ -100,4 +100,8 @@ img{
 }
 select.form-control {
     -webkit-appearance: menulist;
-}s
+}
+
+#chart{
+  overflow: hidden;
+}
