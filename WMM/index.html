@@ -150,7 +150,8 @@ var onemonth = [];
     title: namedata[i]
   });
   google.maps.event.addListener(marker, 'click', function() {
-     
+      
+
       drawChart(this);
     });
 }
@@ -293,21 +294,48 @@ function drawChart(marker){
   //alert(marker.position.lat().toFixed(6).toString()+marker.position.lng().toFixed(6).toString());
     var options = {'title':'Purchased @ '+
                         storename,
-                       'width':300,
-                       'height':150};
+                        hAxis: {
+                              format: 'MMM yy',
+                              gridlines: {count: 10}
+                        },
+                        animation: {
+          duration: 1500,
+          easing: 'linear',
+          startup: true
+        },
+        vAxis: {
+          ticks: [10, 20, 30, 40, 50, 60],
+          gridlines: {color: '#ccc'}
+        },
+        legend: {position: 'none'},
+                        colors: ['#a02b70'],
+                        pointSize: 10,
+                       'width':500,
+                       'height':200};
         
         var node = document.createElement('div'),
             infoWindow  = new google.maps.InfoWindow({maxWidth: 500});
+            infoWindow.setContent(
+                '<button id="chartbtn">Change Size</button>');
             
         node.setAttribute("id","chart");
 
         var chart = new google.visualization.LineChart(node);
+        var btn = document.createElement('BUTTON');
+        btn.setAttribute("id","chartbtn");
 
-
-            
+            btn.onclick = function (e) {
+              options.chartArea.height === '50%' ? doubleIt() : halveIt();
+              chart.draw(data, options);
+        }
             chart.draw(data, options);
+
             infoWindow.setContent(node);
             infoWindow.open(marker.getMap(),marker); 
+      
+
+        
+
 }
 
 </script>
